@@ -616,10 +616,22 @@ private extension Scheme {
             },
             test: scheme.testAction.flatMap { testAction in
                 let targets = testAction.testables.map {
-                    Scheme.Test.TestTarget(
+                    let refContainer = $0.buildableReference.referencedContainer
+                    var locationType: TestableTargetReference.Location
+                    
+                    print("Key \(refContainer) found for \(refContainer)")
+                    if (refContainer.contains(".xcodeproj") && refContainer.contains("..")) {
+                        locationType = .project(refContainer.key.replacingOccurrences(of: "container:..", with: ""))
+                    } else if (refContainer.contains("..")) {
+                        locationType = .package(refContainer.key.replacingOccurrences(of: "container:..", with: ""))
+                    } else {
+                        locationType = .local
+                    }
+                    
+                    return Scheme.Test.TestTarget(
                         targetReference: TestableTargetReference(
                             name: $0.buildableReference.blueprintName,
-                            location: .local),
+                            location: locationType),
                         randomExecutionOrder: $0.parallelizable,
                         parallelizable: $0.parallelizable,
                         skipped: $0.skipped,
