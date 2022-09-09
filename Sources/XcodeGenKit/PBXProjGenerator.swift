@@ -163,6 +163,7 @@ public class PBXProjGenerator {
         }
 
         for (name, package) in project.packages {
+            print(name)
             switch package {
             case let .remote(url, versionRequirement):
                 let packageReference = XCRemoteSwiftPackageReference(repositoryURL: url, versionRequirement: versionRequirement)
@@ -338,12 +339,22 @@ public class PBXProjGenerator {
 
         let dependencies: [PBXTargetDependency] = target.targets.map {
             let dependency = $0
+<<<<<<< Updated upstream
             if dependency.contains("/") && dependency.components(separatedBy: "/").count == 2 {
                 let tokens: [String] = dependency.components(separatedBy: "/")
                 let projectName: String = tokens[0]
                 let targetName: String = tokens[1]
+=======
+            if dependency.contains("/")
+                , let tokens: [String] = dependency.components(separatedBy: " :/")
+                , tokens.count >= 2
+                , let type: String = (tokens.count == 3) ? tokens[0].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) : "target: "
+                , let projectName: String = tokens[tokens.count-2].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                , let targetName: String = tokens[tokens.count-1].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) {
+>>>>>>> Stashed changes
                 
-                if nil != project.packages[projectName] {
+                switch type {
+                case "package:":
                     let productName = targetName
                     let packageDependency = addObject(
                         XCSwiftPackageProductDependency(productName: productName)
@@ -353,12 +364,13 @@ public class PBXProjGenerator {
                         PBXTargetDependency( product: packageDependency)
                     )
                     return targetDependency
-                }
                 
-                do {
-                    return try generateExternalTargetDependency(from: target.name, to: targetName, in: projectName, platform: .iOS).0
-                } catch {
-                    print("Error: \(error)")
+                default:
+                    do {
+                        return try generateExternalTargetDependency(from: target.name, to: targetName, in: projectName, platform: .iOS).0
+                    } catch {
+                        print("Error: \(error)")
+                    }
                 }
             }
             return generateTargetDependency(from: target.name, to: $0, platform: nil)

@@ -92,7 +92,27 @@ public struct Project: BuildSettingsContainer {
     }
 
     public func getProjectTarget(_ targetName: String) -> ProjectTarget? {
-        targetsMap[targetName] ?? aggregateTargetsMap[targetName]
+//        if targetName.contains("/") {
+//            let targetTokens = targetName.components(separatedBy: "/")
+//            
+//            if 2 == targetTokens.count
+//                , let project = targetTokens.first
+//                , let targetName = targetTokens.last
+//                , let reference = self.projectReferencesMap[project] {
+//                
+//                print("Project: \(project)")
+//                
+//                let version = Version("1.0.0")
+//                do {
+//                    
+////                    let remoteProject = try SpecLoader(version: version).loadProject(path: Path(reference.path), projectRoot: nil, variables: [:])
+////                    return remoteProject.targetsMap[targetName]
+//                } catch {
+//                    print (error)
+//                }
+//            }
+//        }
+        return targetsMap[targetName] ?? aggregateTargetsMap[targetName]
     }
 
     public func getConfig(_ configName: String) -> Config? {

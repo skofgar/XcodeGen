@@ -32,7 +32,8 @@ aggregateTargets:
   IncludedAggregateTarget:
     targets:
       - IncludedTarget
-      - AnotherProject/ExternalTarget
+      - project: AnotherProject/ExternalTarget
+      - package: ../SPM-project/spm-project
     configFiles:
       Config: config
     buildScripts:
