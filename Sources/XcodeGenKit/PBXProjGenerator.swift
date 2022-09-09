@@ -338,33 +338,23 @@ public class PBXProjGenerator {
         }
 
         let dependencies: [PBXTargetDependency] = target.targets.map {
-            let dependency = $0
-<<<<<<< Updated upstream
-            if dependency.contains("/") && dependency.components(separatedBy: "/").count == 2 {
-                let tokens: [String] = dependency.components(separatedBy: "/")
-                let projectName: String = tokens[0]
-                let targetName: String = tokens[1]
-=======
-            if dependency.contains("/")
-                , let tokens: [String] = dependency.components(separatedBy: " :/")
-                , tokens.count >= 2
-                , let type: String = (tokens.count == 3) ? tokens[0].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) : "target: "
-                , let projectName: String = tokens[tokens.count-2].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-                , let targetName: String = tokens[tokens.count-1].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) {
->>>>>>> Stashed changes
-                
-                switch type {
-                case "package:":
-                    let productName = targetName
-                    let packageDependency = addObject(
-                        XCSwiftPackageProductDependency(productName: productName)
+            let dependency: TestableTargetReference = $0
+            
+            if dependency.location.isExternal() {
+                let projectName: String = dependency.location.getProjectName()
+                let targetName: String = dependency.name
+
+                switch dependency.location {
+                case .package(let packageName):
+                    let packageDependency = self.addObject(
+                        XCSwiftPackageProductDependency(productName: packageName)
                     )
-                    
-                    let targetDependency = addObject(
+
+                    let targetDependency = self.addObject(
                         PBXTargetDependency( product: packageDependency)
                     )
                     return targetDependency
-                
+
                 default:
                     do {
                         return try generateExternalTargetDependency(from: target.name, to: targetName, in: projectName, platform: .iOS).0
@@ -373,7 +363,7 @@ public class PBXProjGenerator {
                     }
                 }
             }
-            return generateTargetDependency(from: target.name, to: $0, platform: nil)
+            return generateTargetDependency(from: target.name, to: dependency.name, platform: nil)
         }
 
         let defaultConfigurationName = project.options.defaultConfig ?? project.configs.first?.name ?? ""
