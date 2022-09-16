@@ -163,7 +163,6 @@ public class PBXProjGenerator {
         }
 
         for (name, package) in project.packages {
-            print(name)
             switch package {
             case let .remote(url, versionRequirement):
                 let packageReference = XCRemoteSwiftPackageReference(repositoryURL: url, versionRequirement: versionRequirement)
