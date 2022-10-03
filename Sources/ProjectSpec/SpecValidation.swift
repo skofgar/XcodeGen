@@ -147,8 +147,9 @@ extension Project {
 
         for target in aggregateTargets {
             for dependency in target.targets {
-                if getProjectTarget(dependency) == nil {
-                    errors.append(.invalidTargetDependency(target: target.name, dependency: dependency))
+                if getProjectTarget(dependency.name) == nil, let projectName = dependency.reference.components(separatedBy: "/").first,
+                   (getPackage(projectName) == nil && getProjectReference(projectName) == nil) {
+                    errors.append(.invalidTargetDependency(target: target.name, dependency: dependency.reference))
                 }
             }
         }

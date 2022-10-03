@@ -5,7 +5,7 @@ import XcodeProj
 public struct AggregateTarget: ProjectTarget {
     public var name: String
     public var type: PBXProductType = .none
-    public var targets: [String]
+    public var targets: [TestableTargetReference]
     public var settings: Settings
     public var buildScripts: [BuildScript]
     public var configFiles: [String: String]
@@ -14,7 +14,7 @@ public struct AggregateTarget: ProjectTarget {
 
     public init(
         name: String,
-        targets: [String],
+        targets: [TestableTargetReference],
         settings: Settings = .empty,
         configFiles: [String: String] = [:],
         buildScripts: [BuildScript] = [],
@@ -34,7 +34,7 @@ public struct AggregateTarget: ProjectTarget {
 extension AggregateTarget: CustomStringConvertible {
 
     public var description: String {
-        "\(name)\(targets.isEmpty ? "" : ": \(targets.joined(separator: ", "))")"
+        "\(name)\(targets.isEmpty ? "" : ": \(targets.compactMap { $0.description }.joined(separator: ", "))")"
     }
 }
 
@@ -68,7 +68,7 @@ extension AggregateTarget: JSONEncodable {
     public func toJSONValue() -> Any {
         [
             "settings": settings.toJSONValue(),
-            "targets": targets,
+            "targets": targets.map { $0.toJSONValue() },
             "configFiles": configFiles,
             "attributes": attributes,
             "buildScripts": buildScripts.map { $0.toJSONValue() },

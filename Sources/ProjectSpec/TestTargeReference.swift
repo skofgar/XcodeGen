@@ -20,6 +20,31 @@ public struct TestableTargetReference: Hashable {
         case local
         case project(String)
         case package(String)
+        
+        
+        /// Check whether target is from the current project
+        /// - Returns: true if the current location is from the current `local` project, returns false if it's a `package` or `project`
+        public func isLocal() -> Bool {
+            return self == .local 
+        }
+        
+        /// Check whether target is referring to an external project
+        /// - Returns: true if the target is from another `package` or `project`, returns false if it's from the current `local` project
+        public func isExternal() -> Bool {
+            return self != .local
+        }
+        
+        
+        /// Returns project name, if the project is external
+        /// - Returns: If project is local, return an empty string. If project is external return name.
+        public func getProjectName() -> String {
+            switch self {
+            case .local:
+                return ""
+            case .project(let root), .package(let root):
+                return "\(root)"
+            }
+        }
     }
 
     public init(name: String, location: Location) {

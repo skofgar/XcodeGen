@@ -3,6 +3,8 @@ configFiles:
   IncludedConfig: config
 projectReferences:
   ProjX: { path: ../TestProject/Project.xcodeproj }
+packages:
+  SPM-project: { path: ../SPM-project }
 targets:
   IncludedTarget:
     type: application
@@ -31,7 +33,9 @@ targets:
 aggregateTargets:
   IncludedAggregateTarget:
     targets:
-      - IncludedTarget
+      - local: IncludedTarget
+      - project: AnotherProject/ExternalTarget
+      - package: SPM-project/spm-project
     configFiles:
       Config: config
     buildScripts:
