@@ -97,19 +97,19 @@ class SpecLoadingTests: XCTestCase {
                 try expect(project.aggregateTargets) == [
                     AggregateTarget(
                         name: "IncludedAggregateTarget",
-                        targets: ["IncludedTarget"],
+                        targets: [TestableTargetReference(name: "IncludedTarget", location: .local), TestableTargetReference(name: "ExternalTarget", location: .project("AnotherProject")), TestableTargetReference(name: "spm-project", location: .package("SPM-project"))],
                         configFiles: ["Config": "paths_test/config"],
                         buildScripts: [BuildScript(script: .path("paths_test/buildScript"))]
                     ),
                     AggregateTarget(
                         name: "NewAggregateTarget",
-                        targets: ["NewTarget"],
+                        targets: [TestableTargetReference(name: "NewTarget", location: .local)],
                         configFiles: ["Config": "config"],
                         buildScripts: [BuildScript(script: .path("buildScript"))]
                     ),
                     AggregateTarget(
                         name: "RecursiveAggregateTarget",
-                        targets: ["RecursiveTarget"],
+                        targets: [TestableTargetReference(name: "RecursiveTarget", location: .local)],
                         configFiles: ["Config": "paths_test/recursive_test/config"],
                         buildScripts: [BuildScript(script: .path("paths_test/recursive_test/buildScript"))]
                     ),
@@ -734,13 +734,13 @@ class SpecLoadingTests: XCTestCase {
 
             $0.it("parses aggregate targets") {
                 let dictionary: [String: Any] = [
-                    "targets": ["target_1", "target_2"],
+                    "targets": [["local": "target_1"], ["local": "target_2"]],
                     "settings": ["SETTING": "VALUE"],
                     "configFiles": ["debug": "file.xcconfig"],
                 ]
 
                 let project = try getProjectSpec(["aggregateTargets": ["AggregateTarget": dictionary]])
-                let expectedTarget = AggregateTarget(name: "AggregateTarget", targets: ["target_1", "target_2"], settings: ["SETTING": "VALUE"], configFiles: ["debug": "file.xcconfig"])
+                let expectedTarget = AggregateTarget(name: "AggregateTarget", targets: [TestableTargetReference(name: "target_1", location: .local), TestableTargetReference(name: "target_2", location: .local)], settings: ["SETTING": "VALUE"], configFiles: ["debug": "file.xcconfig"])
                 try expect(project.aggregateTargets) == [expectedTarget]
             }
 

@@ -26,7 +26,7 @@ targets:
 aggregateTargets:
   IncludedAggregateTarget:
     targets:
-      - IncludedTarget
+      - local: IncludedTarget
     configFiles:
       Config: config
     buildScripts:

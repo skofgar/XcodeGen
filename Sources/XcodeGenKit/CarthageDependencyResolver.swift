@@ -110,8 +110,8 @@ public class CarthageDependencyResolver {
                     }
                 }
             } else if let aggregateTarget = projectTarget as? AggregateTarget {
-                for dependencyName in aggregateTarget.targets {
-                    if let projectTarget = project.getProjectTarget(dependencyName) {
+                for dependency in aggregateTarget.targets {
+                    if let projectTarget = project.getProjectTarget(dependency.name) {
                         queue.append(projectTarget)
                     }
                 }

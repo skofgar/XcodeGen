@@ -574,7 +574,7 @@ class ProjectSpecTests: XCTestCase {
                                                                          workingDirectory: "foo"),
                                                     attributes: ["foo": "bar"])],
                                    aggregateTargets: [AggregateTarget(name: "aggregate target",
-                                                                      targets: ["App"],
+                                                                      targets: [TestableTargetReference(name: "App", location: .local)],
                                                                       settings: Settings(buildSettings: ["buildSettings": "bar"],
                                                                                          configSettings: ["configSettings": Settings(buildSettings: [:],
                                                                                                                                      configSettings: [:],
